@@ -80,7 +80,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickRefreshOAuthToken(View v) {
+ public void onClickRefreshOAuthToken(View v) {
+
+        HashMap map = new HashMap();
+        map.put("client_secret", secret);
+
+        NetworkHandler.sharedInstance().setLoggingInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+
+            OAuthContext.sharedInstance().refresh(registrationUrl, clientId, token.getRefreshToken(),null,map,
+                    //OAuthContext.sharedInstance().authorize(registrationUrl, clientId, secret,
+                    IGNORE_SSL, new IResultCallback<OAuthToken>() {
+                        @Override
+                        public void handleResult(OAuthToken oAuthToken, VerifySdkException e) {
+
+                            if (oAuthToken != null)  {
+                                token = oAuthToken;
+                                showDialog(token);
+                            } else {
+                                showToast(e.toString());
+                            }
+                        }
+                    });
+
 
     }
 
